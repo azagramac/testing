@@ -3,12 +3,14 @@
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <!-- Si necesitas ubicación en background -->
+    <!-- <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" /> -->
 
     <application
         android:allowBackup="true"
-        //android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:label="GPS"
-        //android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.GPS">
 
@@ -16,7 +18,8 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="TU_API_KEY_AQUI" />
 
-        <activity android:name=".MapActivity" />
+        <activity android:name=".MapActivity"
+            android:exported="false" />
 
         <activity android:name=".MainActivity"
             android:exported="true">
