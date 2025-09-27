@@ -7,11 +7,14 @@ on:
 
 permissions:
   contents: write
-  
+
 jobs:
   build:
     name: 🛠 Build & Test
     runs-on: ubuntu-latest
+
+    env:
+      ANDROID_SDK_ROOT: ${{ runner.temp }}/android-sdk
 
     steps:
       - name: 📦 Checkout repo
@@ -27,6 +30,19 @@ jobs:
           distribution: 'temurin'
           cache: 'gradle'
 
+      - name: ⚙️ Install Android SDK and Build Tools
+        run: |
+          mkdir -p $ANDROID_SDK_ROOT
+          wget https://dl.google.com/android/repository/commandlinetools-linux-10925488_latest.zip -O cmdline-tools.zip
+          unzip cmdline-tools.zip -d $ANDROID_SDK_ROOT
+          mkdir -p $ANDROID_SDK_ROOT/cmdline-tools/latest
+          mv $ANDROID_SDK_ROOT/cmdline-tools/* $ANDROID_SDK_ROOT/cmdline-tools/latest/
+          yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_SDK_ROOT --licenses
+          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_SDK_ROOT \
+            "platform-tools" \
+            "platforms;android-34" \
+            "build-tools;35.0.0"
+
       - name: ⚙️ Enable KVM group permissions
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
@@ -36,7 +52,7 @@ jobs:
       - name: 🧪 Run Unit Tests
         run: ./gradlew test
 
-      - name: 🧪 Tests (Pixel 7 Pro, API 34)
+      - name: 🧪 Tests (Google Pixel 3a, API 34)
         uses: reactivecircus/android-emulator-runner@62dbb605bba737720e10b196cb4220d374026a6d
         with:
           api-level: 34
@@ -64,10 +80,31 @@ jobs:
         id: locate_apk
         run: echo "APK_PATH=$(find app/build/outputs/apk/release -name '*.apk' | head -n 1)" >> $GITHUB_OUTPUT
 
-      - name: 📤 Upload to GitHub Release
+      - name: 🔐 Decode keystore from secret
+        run: |
+          echo "${{ secrets.SIGNING_KEYSTORE_BASE64 }}" | base64 --decode > gps-keystore.jks
+
+      - name: 🔏 Sign the APK
+        run: |
+          # Find the unsigned APK
+          UNSIGNED_APK=$(find app/build/outputs/apk/release -name '*-unsigned.apk')
+          SIGNED_APK=${UNSIGNED_APK/-unsigned/-signed}
+
+          # Sign the APK using apksigner from installed build-tools
+          $ANDROID_SDK_ROOT/build-tools/35.0.0/apksigner sign \
+            --ks gps-keystore.jks \
+            --ks-key-alias ${{ secrets.SIGNING_KEY_ALIAS }} \
+            --ks-pass pass:${{ secrets.SIGNING_KEYSTORE_PASSWORD }} \
+            --key-pass pass:${{ secrets.SIGNING_KEY_PASSWORD }} \
+            --out "$SIGNED_APK" \
+            "$UNSIGNED_APK"
+
+          echo "SIGNED_APK=$SIGNED_APK" >> $GITHUB_ENV
+
+      - name: 📤 Upload signed APK to GitHub Releases
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: ${{ steps.locate_apk.outputs.APK_PATH }}
+          files: ${{ env.SIGNED_APK }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
