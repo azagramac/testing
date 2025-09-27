@@ -4,7 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="?attr/colorSurface">
 
     <!-- BRÚJULA -->
     <dev.azagra.gps.CompassView
@@ -30,16 +31,16 @@
     <androidx.gridlayout.widget.GridLayout
         android:id="@+id/gridData"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:rowCount="2"
-        app:columnCount="2"
-        app:orientation="horizontal"
+        android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/snrGraph"
-        app:layout_constraintBottom_toTopOf="@id/btnShareLocation"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/btnShareLocation"
         android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp">
+        android:layout_marginBottom="16dp"
+        app:rowCount="2"
+        app:columnCount="2"
+        app:orientation="horizontal">
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardCoordinates"
@@ -49,7 +50,8 @@
             app:layout_column="0"
             android:layout_margin="4dp"
             app:cardCornerRadius="12dp"
-            app:cardElevation="4dp">
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="?attr/colorSurface">
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/tvCoordinates"
@@ -68,7 +70,8 @@
             app:layout_column="1"
             android:layout_margin="4dp"
             app:cardCornerRadius="12dp"
-            app:cardElevation="4dp">
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="?attr/colorSurface">
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/tvAltitude"
@@ -87,7 +90,8 @@
             app:layout_column="0"
             android:layout_margin="4dp"
             app:cardCornerRadius="12dp"
-            app:cardElevation="4dp">
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="?attr/colorSurface">
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/tvSatellitesCount"
@@ -106,7 +110,8 @@
             app:layout_column="1"
             android:layout_margin="4dp"
             app:cardCornerRadius="12dp"
-            app:cardElevation="4dp">
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="?attr/colorSurface">
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/tvUtcTime"

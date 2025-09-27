@@ -1,0 +1,14 @@
+[
+    {
+        "merged": "/Users/jose/.gradle/daemon/8.14.3/dev.azagra.gps.app-mergeDebugResources-34:/layout/activity_map.xml",
+        "source": "/Users/jose/.gradle/daemon/8.14.3/dev.azagra.gps.app-main-37:/layout/activity_map.xml"
+    },
+    {
+        "merged": "dev.azagra.gps.app-mergeDebugResources-34:/layout/activity_main.xml",
+        "source": "dev.azagra.gps.app-main-37:/layout/activity_main.xml"
+    },
+    {
+        "merged": "/Users/jose/.gradle/daemon/8.14.3/dev.azagra.gps.app-mergeDebugResources-34:/layout/activity_main.xml",
+        "source": "/Users/jose/.gradle/daemon/8.14.3/dev.azagra.gps.app-main-37:/layout/activity_main.xml"
+    }
+]

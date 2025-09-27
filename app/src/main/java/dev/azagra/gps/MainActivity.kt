@@ -1,10 +1,9 @@
 package dev.azagra.gps
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Typeface
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.style.StyleSpan
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -12,11 +11,17 @@ import android.hardware.SensorManager
 import android.location.GnssStatus
 import android.location.Location
 import android.location.LocationManager
+import android.os.Build
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.StyleSpan
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.textview.MaterialTextView
+import androidx.core.content.ContextCompat
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.textview.MaterialTextView
 import java.net.URLEncoder
 import java.text.SimpleDateFormat
 import java.util.*
@@ -40,6 +45,16 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private var orientationAngles = FloatArray(3)
     private var lastAzimuth = 0f
 
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            initLocationAndSensors()
+        } else {
+            Toast.makeText(this, "Permiso de ubicación denegado", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -52,12 +67,29 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         tvUtcTime = findViewById(R.id.tvUtcTime)
         btnShareLocation = findViewById(R.id.btnShareLocation)
 
-        // Tamaño texto ya ajustado en XML, centrado en tarjeta
+        checkLocationPermission()
+        btnShareLocation.setOnClickListener { shareLocation() }
+    }
 
+    private fun checkLocationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            when {
+                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                        == PackageManager.PERMISSION_GRANTED -> {
+                    initLocationAndSensors()
+                }
+                else -> {
+                    requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                }
+            }
+        } else {
+            initLocationAndSensors()
+        }
+    }
+
+    private fun initLocationAndSensors() {
         locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
         sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
-
-        btnShareLocation.setOnClickListener { shareLocation() }
 
         startLocationUpdates()
         startGnssUpdates()
@@ -72,9 +104,18 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     }
 
     private fun updateLocationUI(location: Location) {
-        tvCoordinates.text = formatBoldLabel(getString(R.string.coordinates), "%.6f, %.6f".format(location.latitude, location.longitude))
-        tvAltitude.text = formatBoldLabel(getString(R.string.altitude), "%.1f m".format(location.altitude))
-        tvUtcTime.text = formatBoldLabel(getString(R.string.utc_time), SimpleDateFormat("HH:mm:ss", Locale.US).format(Date()))
+        tvCoordinates.text = formatBoldLabel(
+            getString(R.string.coordinates),
+            "%.6f, %.6f".format(location.latitude, location.longitude)
+        )
+        tvAltitude.text = formatBoldLabel(
+            getString(R.string.altitude),
+            "%.1f m".format(location.altitude)
+        )
+        tvUtcTime.text = formatBoldLabel(
+            getString(R.string.utc_time),
+            SimpleDateFormat("HH:mm:ss", Locale.US).format(Date())
+        )
     }
 
     private fun startLocationUpdates() {
@@ -104,7 +145,10 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                         }
                     }
                     snrGraph.updateSnrData(snrList)
-                    tvSatellitesCount.text = formatBoldLabel(getString(R.string.satellites), "$visibleSatellites")
+                    tvSatellitesCount.text = formatBoldLabel(
+                        getString(R.string.satellites),
+                        "$visibleSatellites"
+                    )
                     compassView.updateSatellites(satellitesPositions)
                 }
             }, null)
@@ -146,19 +190,23 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     }
 
     private fun shareLocation() {
-        val lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-        if (lastLocation != null) {
-            val latDMS = decimalToDMS(lastLocation.latitude, true)
-            val lonDMS = decimalToDMS(lastLocation.longitude, false)
-            val url = "https://www.google.com/maps/place/${URLEncoder.encode("$latDMS $lonDMS", "UTF-8")}"
+        try {
+            val lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+            if (lastLocation != null) {
+                val latDMS = decimalToDMS(lastLocation.latitude, true)
+                val lonDMS = decimalToDMS(lastLocation.longitude, false)
+                val url = "https://www.google.com/maps/place/${URLEncoder.encode("$latDMS $lonDMS", "UTF-8")}"
 
-            val intent = Intent(Intent.ACTION_SEND).apply {
-                type = "text/plain"
-                putExtra(Intent.EXTRA_TEXT, url)
+                val intent = Intent(Intent.ACTION_SEND).apply {
+                    type = "text/plain"
+                    putExtra(Intent.EXTRA_TEXT, url)
+                }
+                startActivity(Intent.createChooser(intent, getString(R.string.share_location)))
+            } else {
+                Toast.makeText(this, getString(R.string.location_not_available), Toast.LENGTH_SHORT).show()
             }
-            startActivity(Intent.createChooser(intent, getString(R.string.share_location)))
-        } else {
-            Toast.makeText(this, getString(R.string.location_not_available), Toast.LENGTH_SHORT).show()
+        } catch (ex: SecurityException) {
+            Toast.makeText(this, getString(R.string.permission_denied), Toast.LENGTH_SHORT).show()
         }
     }
 

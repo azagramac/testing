@@ -1,0 +1,11 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- Icono de satélite basado en Material Icons Satellite -->
+    <path
+        android:fillColor="?attr/colorPrimary"
+        android:pathData="M20 5v14h-2v-3.56l-3.72-3.72 1.42-1.42 3.58 3.58V5h1zM10 4H8v16h2v-2H6v-1h6v-3H6v-1h4v-3H6V8h4V4z"/>
+</vector>
