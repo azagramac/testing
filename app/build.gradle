@@ -41,6 +41,7 @@ dependencies {
     // Core Android
     implementation 'androidx.core:core-ktx:1.12.0'
     implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation "androidx.gridlayout:gridlayout:1.1.0"
     implementation 'com.google.android.material:material:1.10.0'
 
     // Google Maps y Location
@@ -56,4 +57,5 @@ dependencies {
 
     // MPAndroidChart para el gráfico de barras
     implementation "com.github.PhilJay:MPAndroidChart:3.1.0"
+
 }
