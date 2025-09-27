@@ -1,39 +1,40 @@
 package dev.azagra.gps
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
+import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
+import androidx.core.content.res.use
 
 class CompassView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null
 ) : View(context, attrs) {
 
-    private val paintCircle = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        style = Paint.Style.STROKE
-        strokeWidth = 6f
-        color = Color.GRAY
+    private var azimuth = 0f
+    private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val textPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val satellitePaint = Paint(Paint.ANTI_ALIAS_FLAG)
+
+    private var satellites: List<Pair<Float, Float>> = emptyList() // (angle, SNR)
+
+    init {
+        context.theme.obtainStyledAttributes(attrs, intArrayOf(android.R.attr.colorPrimary), 0, 0)
+            .use {
+                paint.color = it.getColor(0, Color.GREEN)
+                satellitePaint.color = it.getColor(0, Color.GREEN)
+            }
+        textPaint.color = Color.WHITE
+        textPaint.textSize = 40f
+        textPaint.textAlign = Paint.Align.CENTER
     }
 
-    private val paintText = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        textSize = 50f
-        color = Color.BLACK
-        textAlign = Paint.Align.CENTER
+    fun updateOrientation(newAzimuth: Float) {
+        azimuth = newAzimuth
+        invalidate()
     }
 
-    private val paintSatellite = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        style = Paint.Style.FILL
-        color = Color.BLUE
-    }
-
-    private var bearing: Float = 0f
-    private var satellitesCount: Int = 0
-
-    fun updateCompass(newBearing: Float, satellites: Int) {
-        bearing = newBearing
-        satellitesCount = satellites
+    fun updateSatellites(satData: List<Pair<Float, Float>>) {
+        satellites = satData
         invalidate()
     }
 
@@ -41,24 +42,29 @@ class CompassView @JvmOverloads constructor(
         super.onDraw(canvas)
         val cx = width / 2f
         val cy = height / 2f
-        val radius = Math.min(cx, cy) - 16f
+        val radius = (Math.min(cx, cy) * 0.9f)
 
         // Círculo exterior
-        canvas.drawCircle(cx, cy, radius, paintCircle)
+        paint.style = Paint.Style.STROKE
+        paint.strokeWidth = 8f
+        canvas.drawCircle(cx, cy, radius, paint)
 
-        // Puntos cardinales
-        canvas.drawText("N", cx, cy - radius + 50f, paintText)
-        canvas.drawText("S", cx, cy + radius - 10f, paintText)
-        canvas.drawText("E", cx + radius - 30f, cy + 15f, paintText)
-        canvas.drawText("W", cx - radius + 30f, cy + 15f, paintText)
+        // Cardinales
+        val cardinalPoints = listOf("N", "E", "S", "W")
+        for (i in cardinalPoints.indices) {
+            val angle = Math.toRadians((i * 90 - azimuth).toDouble())
+            val x = cx + (radius - 40) * Math.sin(angle).toFloat()
+            val y = cy - (radius - 40) * Math.cos(angle).toFloat()
+            canvas.drawText(cardinalPoints[i], x, y + 15, textPaint)
+        }
 
-        // Dibujar satélites como puntos alrededor
-        for (i in 0 until satellitesCount) {
-            val angle = 360f / (satellitesCount.coerceAtLeast(1)) * i - bearing
-            val rad = Math.toRadians(angle.toDouble())
-            val sx = (cx + radius * 0.8 * Math.sin(rad)).toFloat()
-            val sy = (cy - radius * 0.8 * Math.cos(rad)).toFloat()
-            canvas.drawCircle(sx, sy, 10f, paintSatellite)
+        // Dibujar satélites
+        satellites.forEach { (angleDeg, _) ->
+            val angle = Math.toRadians((angleDeg - azimuth).toDouble())
+            val satRadius = radius - 60
+            val x = cx + satRadius * Math.sin(angle).toFloat()
+            val y = cy - satRadius * Math.cos(angle).toFloat()
+            canvas.drawCircle(x, y, 15f, satellitePaint)
         }
     }
 }

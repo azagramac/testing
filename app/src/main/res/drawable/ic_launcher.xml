@@ -3,7 +3,15 @@
     android:height="48dp"
     android:viewportWidth="48"
     android:viewportHeight="48">
+
+    <!-- Fondo del icono -->
     <path
-        android:fillColor="?attr/colorPrimary"
-        android:pathData="M20 12c0-4.41-3.59-8-8-8-1.4 0-2.72.43-3.82 1.15l8.67 8.67c.72-1.1 1.15-2.42 1.15-3.82zm-3.41-3.59L4 17.59V20h2.41l12.59-12.59-2.41-2.41z"/>
+        android:fillColor="?attr/colorPrimaryContainer"
+        android:pathData="M0,0h48v48h-48z"/>
+
+    <!-- Símbolo del GPS/Satélite -->
+    <path
+        android:fillColor="?attr/colorOnPrimaryContainer"
+        android:pathData="M20,12c0-4.41-3.59-8-8-8-1.4,0-2.72,0.43-3.82,1.15l8.67,8.67c0.72-1.1,1.15-2.42,1.15-3.82z
+                           M16.59,8.41L4,20.0V22h2.41l12.59-12.59-2.41-2.41z"/>
 </vector>

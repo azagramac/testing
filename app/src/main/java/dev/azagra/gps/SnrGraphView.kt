@@ -1,48 +1,41 @@
 package dev.azagra.gps
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
+import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
+import androidx.core.content.res.use
 
 class SnrGraphView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null
 ) : View(context, attrs) {
 
-    private var snrValues: List<Float> = emptyList()
+    private var snrData: List<Float> = emptyList()
+    private val barPaint = Paint(Paint.ANTI_ALIAS_FLAG)
 
-    private val paintBar = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.MAGENTA
+    init {
+        context.theme.obtainStyledAttributes(attrs, intArrayOf(android.R.attr.colorPrimary), 0, 0)
+            .use { barPaint.color = it.getColor(0, Color.GREEN) }
     }
 
-    private val paintText = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        textSize = 30f
-        color = Color.BLACK
-        textAlign = Paint.Align.CENTER
-    }
-
-    fun updateData(values: List<Float>) {
-        snrValues = values
+    fun updateSnrData(data: List<Float>) {
+        snrData = data
         invalidate()
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        if (snrValues.isEmpty()) return
+        if (snrData.isEmpty()) return
 
-        val barWidth = width.toFloat() / snrValues.size
-        val maxSNR = snrValues.maxOrNull() ?: 1f
-        val scale = height / (maxSNR * 1.1f) // dejar margen
+        val widthPerBar = width / snrData.size.toFloat()
+        val maxSNR = 60f // Ajusta según tu escala
 
-        snrValues.forEachIndexed { index, snr ->
-            val left = index * barWidth + barWidth * 0.1f
-            val right = (index + 1) * barWidth - barWidth * 0.1f
-            val top = height - snr * scale
-            val bottom = height.toFloat()
-            canvas.drawRect(left, top, right, bottom, paintBar)
-            canvas.drawText("%.0f".format(snr), (left + right) / 2, top - 8f, paintText)
+        snrData.forEachIndexed { index, snr ->
+            val barHeight = (snr / maxSNR) * height
+            val left = index * widthPerBar + 10
+            val top = height - barHeight
+            val right = (index + 1) * widthPerBar - 10
+            canvas.drawRect(left, top, right, height.toFloat(), barPaint)
         }
     }
 }

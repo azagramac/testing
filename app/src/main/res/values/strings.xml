@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name">GPS</string>
-    <string name="coordinates">Coordenadas: </string>
-    <string name="altitude">Altitud: </string>
-    <string name="satellites">Satélites: </string>
-    <string name="utc_time">Hora UTC: </string>
+    <string name="coordinates_text">Coordenadas: %.6f, %.6f</string>
+    <string name="altitude_text">Altitud: %.1f m</string>
+    <string name="satellites_text">Satélites: %d</string>
+    <string name="utc_time_text">Hora UTC: %s</string>
     <string name="share_location">Compartir ubicación</string>
-    <string name="permission_denied">Permiso de ubicación denegado</string>
+    <string name="permission_denied">Permiso denegado</string>
 </resources>
