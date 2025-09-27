@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace 'dev.azagra.gps'
-    compileSdk 34
+    compileSdkVersion 34
 
     defaultConfig {
         applicationId "dev.azagra.gps"
         minSdk 34
-        targetSdk 34
+        targetSdkVersion 34
         versionCode 1
         versionName "1.0"
 
