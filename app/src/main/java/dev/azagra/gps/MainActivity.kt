@@ -1,6 +1,10 @@
 package dev.azagra.gps
 
 import android.content.Intent
+import android.graphics.Typeface
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.StyleSpan
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -20,7 +24,6 @@ import kotlin.math.roundToInt
 
 class MainActivity : AppCompatActivity(), SensorEventListener {
 
-    // Views
     private lateinit var compassView: CompassView
     private lateinit var snrGraph: SnrGraphView
     private lateinit var tvCoordinates: MaterialTextView
@@ -29,7 +32,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private lateinit var tvUtcTime: MaterialTextView
     private lateinit var btnShareLocation: MaterialButton
 
-    // Location & Sensors
     private lateinit var locationManager: LocationManager
     private lateinit var sensorManager: SensorManager
     private var accelerometerReading = FloatArray(3)
@@ -50,6 +52,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         tvUtcTime = findViewById(R.id.tvUtcTime)
         btnShareLocation = findViewById(R.id.btnShareLocation)
 
+        // Tamaño texto ya ajustado en XML, centrado en tarjeta
+
         locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
         sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
 
@@ -60,7 +64,19 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         startSensorUpdates()
     }
 
-    // --- Location Updates ---
+    private fun formatBoldLabel(label: String, value: String): SpannableString {
+        val fullText = "$label\n$value"
+        val spannable = SpannableString(fullText)
+        spannable.setSpan(StyleSpan(Typeface.BOLD), 0, label.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        return spannable
+    }
+
+    private fun updateLocationUI(location: Location) {
+        tvCoordinates.text = formatBoldLabel(getString(R.string.coordinates), "%.6f, %.6f".format(location.latitude, location.longitude))
+        tvAltitude.text = formatBoldLabel(getString(R.string.altitude), "%.1f m".format(location.altitude))
+        tvUtcTime.text = formatBoldLabel(getString(R.string.utc_time), SimpleDateFormat("HH:mm:ss", Locale.US).format(Date()))
+    }
+
     private fun startLocationUpdates() {
         try {
             val provider = LocationManager.GPS_PROVIDER
@@ -72,13 +88,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         }
     }
 
-    private fun updateLocationUI(location: Location) {
-        tvCoordinates.text = getString(R.string.coordinates_text, location.latitude, location.longitude)
-        tvAltitude.text = getString(R.string.altitude_text, location.altitude)
-        tvUtcTime.text = SimpleDateFormat("HH:mm:ss", Locale.US).format(Date())
-    }
-
-    // --- GNSS Updates ---
     private fun startGnssUpdates() {
         try {
             locationManager.registerGnssStatusCallback(object : GnssStatus.Callback() {
@@ -90,13 +99,12 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                         if (status.usedInFix(i)) {
                             val snr = status.getCn0DbHz(i)
                             snrList.add(snr)
-                            val azimuth = status.getAzimuthDegrees(i)
-                            satellitesPositions.add(Pair(azimuth, snr))
+                            satellitesPositions.add(Pair(status.getAzimuthDegrees(i), snr))
                             visibleSatellites++
                         }
                     }
                     snrGraph.updateSnrData(snrList)
-                    tvSatellitesCount.text = getString(R.string.satellites_text, visibleSatellites)
+                    tvSatellitesCount.text = formatBoldLabel(getString(R.string.satellites), "$visibleSatellites")
                     compassView.updateSatellites(satellitesPositions)
                 }
             }, null)
@@ -105,7 +113,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         }
     }
 
-    // --- Sensors (Brújula) ---
     private fun startSensorUpdates() {
         sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)?.also {
             sensorManager.registerListener(this, it, SensorManager.SENSOR_DELAY_GAME)
@@ -138,7 +145,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         locationManager.removeUpdates { }
     }
 
-    // --- Compartir Ubicación ---
     private fun shareLocation() {
         val lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
         if (lastLocation != null) {

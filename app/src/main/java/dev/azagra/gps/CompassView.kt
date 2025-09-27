@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
+import com.google.android.material.color.MaterialColors
 import androidx.core.content.res.use
 
 class CompassView @JvmOverloads constructor(
@@ -15,15 +16,16 @@ class CompassView @JvmOverloads constructor(
     private val textPaint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val satellitePaint = Paint(Paint.ANTI_ALIAS_FLAG)
 
-    private var satellites: List<Pair<Float, Float>> = emptyList() // (azimuth, SNR)
+    private var satellites: List<Pair<Float, Float>> = emptyList() // (angle, SNR)
 
     init {
-        context.theme.obtainStyledAttributes(attrs, intArrayOf(android.R.attr.colorPrimary), 0, 0)
-            .use {
-                paint.color = it.getColor(0, Color.GREEN)
-                satellitePaint.color = it.getColor(0, Color.CYAN)
-            }
-        textPaint.color = Color.WHITE
+        // Color primario dinámico (Material You)
+        val colorPrimary = MaterialColors.getColor(context, R.attr.colorPrimary, Color.GREEN)
+        paint.color = colorPrimary
+        satellitePaint.color = colorPrimary
+
+        // Color de texto adaptativo al tema
+        textPaint.color = MaterialColors.getColor(context, R.attr.colorOnSurface, Color.BLACK)
         textPaint.textSize = 40f
         textPaint.textAlign = Paint.Align.CENTER
     }
@@ -59,14 +61,12 @@ class CompassView @JvmOverloads constructor(
         }
 
         // Dibujar satélites
-        if (satellites.isNotEmpty()) {
-            satellites.forEach { (angleDeg, _) ->
-                val angle = Math.toRadians((angleDeg - azimuth).toDouble())
-                val satRadius = radius - 60
-                val x = cx + satRadius * Math.sin(angle).toFloat()
-                val y = cy - satRadius * Math.cos(angle).toFloat()
-                canvas.drawCircle(x, y, 12f, satellitePaint)
-            }
+        satellites.forEach { (angleDeg, _) ->
+            val angle = Math.toRadians((angleDeg - azimuth).toDouble())
+            val satRadius = radius - 60
+            val x = cx + satRadius * Math.sin(angle).toFloat()
+            val y = cy - satRadius * Math.cos(angle).toFloat()
+            canvas.drawCircle(x, y, 15f, satellitePaint)
         }
     }
 }

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:padding="16dp">
 
-    <!-- PARTE SUPERIOR: BRÚJULA -->
+    <!-- BRÚJULA -->
     <dev.azagra.gps.CompassView
         android:id="@+id/compassView"
         android:layout_width="0dp"
@@ -14,10 +14,9 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.35"
-        android:layout_marginBottom="8dp"/>
+        app:layout_constraintHeight_percent="0.35"/>
 
-    <!-- PARTE MEDIA: GRÁFICO SNR -->
+    <!-- GRÁFICO SNR -->
     <dev.azagra.gps.SnrGraphView
         android:id="@+id/snrGraph"
         android:layout_width="0dp"
@@ -25,68 +24,110 @@
         app:layout_constraintTop_toBottomOf="@id/compassView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.25"
-        android:layout_marginBottom="8dp"/>
+        app:layout_constraintHeight_percent="0.25"/>
 
-    <!-- PARTE INFERIOR: DATOS DE UBICACIÓN -->
-    <LinearLayout
-        android:id="@+id/dataContainer"
-        android:orientation="vertical"
+    <!-- TARJETAS INFERIORES -->
+    <androidx.gridlayout.widget.GridLayout
+        android:id="@+id/gridData"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:rowCount="2"
+        android:columnCount="2"
+        android:orientation="horizontal"
         app:layout_constraintTop_toBottomOf="@id/snrGraph"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/btnShareLocation"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:gravity="center"
-        android:paddingTop="8dp">
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp">
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/tvCoordinates"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/coordinates"
-            android:textColor="?attr/colorOnSurface"
-            android:textAppearance="?attr/textAppearanceBodyMedium"
-            android:layout_marginBottom="4dp"/>
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardCoordinates"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_row="0"
+            android:layout_column="0"
+            android:layout_margin="4dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp">
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/tvAltitude"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/altitude"
-            android:textColor="?attr/colorOnSurface"
-            android:textAppearance="?attr/textAppearanceBodyMedium"
-            android:layout_marginBottom="4dp"/>
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tvCoordinates"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="18sp"/>
+        </com.google.android.material.card.MaterialCardView>
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/tvSatellitesCount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/satellites"
-            android:textColor="?attr/colorOnSurface"
-            android:textAppearance="?attr/textAppearanceBodyMedium"
-            android:layout_marginBottom="4dp"/>
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardAltitude"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_row="0"
+            android:layout_column="1"
+            android:layout_margin="4dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp">
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/tvUtcTime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/utc_time"
-            android:textColor="?attr/colorOnSurface"
-            android:textAppearance="?attr/textAppearanceBodyMedium"
-            android:layout_marginBottom="8dp"/>
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tvAltitude"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="18sp"/>
+        </com.google.android.material.card.MaterialCardView>
 
-        <!-- BOTÓN COMPARTIR UBICACIÓN -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnShareLocation"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/share_location"
-            android:textAppearance="?attr/textAppearanceLabelLarge"
-            android:icon="@drawable/ic_baseline_map_24"
-            app:iconGravity="textStart"
-            android:layout_marginTop="8dp"/>
-    </LinearLayout>
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardSatellites"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_row="1"
+            android:layout_column="0"
+            android:layout_margin="4dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp">
 
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tvSatellitesCount"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="18sp"/>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardUtcTime"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_row="1"
+            android:layout_column="1"
+            android:layout_margin="4dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tvUtcTime"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="18sp"/>
+        </com.google.android.material.card.MaterialCardView>
+
+    </androidx.gridlayout.widget.GridLayout>
+
+    <!-- BOTÓN COMPARTIR UBICACIÓN -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnShareLocation"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/share_location"
+        android:icon="@drawable/ic_baseline_map_24"
+        app:iconGravity="textStart"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
