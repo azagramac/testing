@@ -5,7 +5,6 @@ import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
 import com.google.android.material.color.MaterialColors
-import androidx.core.content.res.use
 
 class SnrGraphView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null
@@ -15,9 +14,8 @@ class SnrGraphView @JvmOverloads constructor(
     private val barPaint = Paint(Paint.ANTI_ALIAS_FLAG)
 
     init {
-        // Color dinámico Material You
-        val colorPrimary = MaterialColors.getColor(context, R.attr.colorPrimary, Color.GREEN)
-        barPaint.color = colorPrimary
+        // Color adaptativo Material You
+        barPaint.color = MaterialColors.getColor(context, com.google.android.material.R.attr.colorPrimary, Color.GREEN)
     }
 
     fun updateSnrData(data: List<Float>) {

@@ -5,7 +5,6 @@ import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
 import com.google.android.material.color.MaterialColors
-import androidx.core.content.res.use
 
 class CompassView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null
@@ -19,13 +18,12 @@ class CompassView @JvmOverloads constructor(
     private var satellites: List<Pair<Float, Float>> = emptyList() // (angle, SNR)
 
     init {
-        // Color primario dinámico (Material You)
-        val colorPrimary = MaterialColors.getColor(context, R.attr.colorPrimary, Color.GREEN)
-        paint.color = colorPrimary
-        satellitePaint.color = colorPrimary
+        // Color adaptativo Material You
+        val color = MaterialColors.getColor(context, com.google.android.material.R.attr.colorPrimary, Color.GREEN)
+        paint.color = color
+        satellitePaint.color = color
 
-        // Color de texto adaptativo al tema
-        textPaint.color = MaterialColors.getColor(context, R.attr.colorOnSurface, Color.BLACK)
+        textPaint.color = MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnSurface, Color.WHITE)
         textPaint.textSize = 40f
         textPaint.textAlign = Paint.Align.CENTER
     }
