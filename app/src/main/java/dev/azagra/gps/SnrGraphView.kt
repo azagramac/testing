@@ -5,50 +5,36 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.View
-import com.google.android.material.color.MaterialColors
-import kotlin.math.max
+import androidx.core.content.ContextCompat
 
 class SnrGraphView @JvmOverloads constructor(
-    context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
-) : View(context, attrs, defStyleAttr) {
+    context: Context, attrs: AttributeSet? = null
+) : View(context, attrs) {
 
-    private var snrData: List<Float> = emptyList()
-    private val barPaint = Paint(Paint.ANTI_ALIAS_FLAG)
-    private val textPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private var snrValues: List<Float> = emptyList()
 
     init {
-        barPaint.color = getThemeColor(android.R.attr.colorPrimary)
-        textPaint.color = getThemeColor(android.R.attr.colorForeground)
-        textPaint.textSize = 32f
-        textPaint.textAlign = Paint.Align.CENTER
+        paint.style = Paint.Style.FILL
+        paint.color = ContextCompat.getColor(context, R.color.snrBar)
+    }
+
+    fun setSnrValues(values: List<Float>) {
+        snrValues = values
+        invalidate()
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        if (snrData.isEmpty()) return
+        val barWidth = width / (snrValues.size.coerceAtLeast(1) * 1.5f)
+        val maxHeight = height.toFloat()
 
-        val w = width.toFloat()
-        val h = height.toFloat()
-        val barWidth = w / max(snrData.size, 1)
-
-        val maxSnr = max(snrData.maxOrNull() ?: 0f, 50f)
-
-        snrData.forEachIndexed { index, snr ->
-            val barHeight = (snr / maxSnr) * h
-            val left = index * barWidth
-            val top = h - barHeight
-            val right = left + barWidth * 0.8f
-            val bottom = h
-            canvas.drawRect(left, top, right, bottom, barPaint)
+        snrValues.forEachIndexed { index, snr ->
+            val left = index * barWidth * 1.5f
+            val top = maxHeight - (snr / 100f) * maxHeight
+            val right = left + barWidth
+            val bottom = maxHeight
+            canvas.drawRect(left, top, right, bottom, paint)
         }
-    }
-
-    fun updateSnrData(newSnrData: List<Float>) {
-        snrData = newSnrData
-        invalidate()
-    }
-
-    private fun getThemeColor(attr: Int): Int {
-        return MaterialColors.getColor(this, attr, 0xFF00FF)
     }
 }

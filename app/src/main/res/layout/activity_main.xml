@@ -1,147 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
-    android:background="?attr/colorSurface">
+    android:background="?attr/colorSurface"
+    tools:context=".MainActivity">
 
-    <!-- BRÚJULA -->
-    <dev.azagra.gps.CompassView
+    <!-- Compass -->
+    <dev.azagra.yourapp.CompassView
         android:id="@+id/compassView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.35"/>
+        app:layout_constraintBottom_toTopOf="@+id/gridBottom"
+        android:layout_margin="16dp" />
 
-    <!-- GRÁFICO SNR -->
-    <dev.azagra.gps.SnrGraphView
-        android:id="@+id/snrGraph"
+    <!-- SNR Graph -->
+    <dev.azagra.yourapp.SnrGraphView
+        android:id="@+id/snrGraphView"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="150dp"
         app:layout_constraintTop_toBottomOf="@id/compassView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.25"
-        android:layout_marginTop="16dp"/>
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="8dp" />
 
-    <!-- TARJETAS INFERIORES -->
+    <!-- Grid de 4 tarjetas -->
     <androidx.gridlayout.widget.GridLayout
-        android:id="@+id/gridData"
+        android:id="@+id/gridBottom"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:rowCount="2"
-        app:columnCount="2"
-        app:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@id/snrGraph"
+        android:rowCount="2"
+        android:columnCount="2"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/btnShareLocation"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp">
+        android:layout_margin="16dp"
+        android:alignmentMode="alignMargins"
+        android:useDefaultMargins="true">
 
+        <!-- Tarjeta 1 -->
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardCoordinates"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_row="0"
-            app:layout_column="0"
             app:layout_columnWeight="1"
-            android:layout_margin="4dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp"
-            app:cardBackgroundColor="?attr/colorSurface">
+            android:background="?attr/colorSurface"
+            app:cardElevation="4dp">
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/tvCoordinates"
+            <TextView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
+                android:layout_height="wrap_content"
+                android:text="Tarjeta 1"
                 android:textColor="?attr/colorOnSurface"
-                android:textSize="16sp"
-                android:padding="12dp"/>
+                android:gravity="center"
+                android:padding="16dp"
+                android:textSize="16sp"/>
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- Tarjeta 2 -->
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardAltitude"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_row="0"
-            app:layout_column="1"
             app:layout_columnWeight="1"
-            android:layout_margin="4dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp"
-            app:cardBackgroundColor="?attr/colorSurface">
+            android:background="?attr/colorSurface"
+            app:cardElevation="4dp">
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/tvAltitude"
+            <TextView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
+                android:layout_height="wrap_content"
+                android:text="Tarjeta 2"
                 android:textColor="?attr/colorOnSurface"
-                android:textSize="16sp"
-                android:padding="12dp"/>
+                android:gravity="center"
+                android:padding="16dp"
+                android:textSize="16sp"/>
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- Tarjeta 3 -->
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardSatellites"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_row="1"
-            app:layout_column="0"
             app:layout_columnWeight="1"
-            android:layout_margin="4dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp"
-            app:cardBackgroundColor="?attr/colorSurface">
+            android:background="?attr/colorSurface"
+            app:cardElevation="4dp">
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/tvSatellitesCount"
+            <TextView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
+                android:layout_height="wrap_content"
+                android:text="Tarjeta 3"
                 android:textColor="?attr/colorOnSurface"
-                android:textSize="16sp"
-                android:padding="12dp"/>
+                android:gravity="center"
+                android:padding="16dp"
+                android:textSize="16sp"/>
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- Tarjeta 4 -->
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardUtcTime"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_row="1"
-            app:layout_column="1"
             app:layout_columnWeight="1"
-            android:layout_margin="4dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp"
-            app:cardBackgroundColor="?attr/colorSurface">
+            android:background="?attr/colorSurface"
+            app:cardElevation="4dp">
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/tvUtcTime"
+            <TextView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
+                android:layout_height="wrap_content"
+                android:text="Tarjeta 4"
                 android:textColor="?attr/colorOnSurface"
-                android:textSize="16sp"
-                android:padding="12dp"/>
+                android:gravity="center"
+                android:padding="16dp"
+                android:textSize="16sp"/>
         </com.google.android.material.card.MaterialCardView>
 
     </androidx.gridlayout.widget.GridLayout>
 
-    <!-- BOTÓN COMPARTIR UBICACIÓN -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnShareLocation"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="@string/share_location"
-        android:icon="@drawable/ic_baseline_map_24"
-        app:iconGravity="textStart"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

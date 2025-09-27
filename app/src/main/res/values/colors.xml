@@ -1,7 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Fallback colors, solo se usan si DynamicColors no está disponible -->
-    <color name="fallback_primary">#6750A4</color>
-    <color name="fallback_onPrimary">#FFFFFF</color>
-    <color name="fallback_secondary">#625B71</color>
-    <color name="fallback_onSecondary">#FFFFFF</color>
+    <!-- Colores dinámicos según tema -->
+    <color name="backgroundColor">@color/system_background</color>
+    <color name="foregroundColor">@color/system_onSurface</color>
+    <color name="cardBackground">@color/system_surface</color>
+    <color name="cardText">@color/system_onSurface</color>
+    <color name="snrBar">@color/system_primary</color>
 </resources>
