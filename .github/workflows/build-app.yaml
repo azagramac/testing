@@ -5,6 +5,9 @@ on:
     tags:
       - 'v*.*.*'  # Se activa con tags como v1.0.0
 
+permissions:
+  contents: write
+  
 jobs:
   build:
     name: 🛠 Build & Test
