@@ -12,10 +12,14 @@ class SnrGraphView @JvmOverloads constructor(
 
     private var snrData: List<Float> = emptyList()
     private val barPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val axisPaint = Paint(Paint.ANTI_ALIAS_FLAG)
 
     init {
         context.theme.obtainStyledAttributes(attrs, intArrayOf(android.R.attr.colorPrimary), 0, 0)
             .use { barPaint.color = it.getColor(0, Color.GREEN) }
+
+        axisPaint.color = Color.WHITE
+        axisPaint.strokeWidth = 2f
     }
 
     fun updateSnrData(data: List<Float>) {
@@ -28,13 +32,16 @@ class SnrGraphView @JvmOverloads constructor(
         if (snrData.isEmpty()) return
 
         val widthPerBar = width / snrData.size.toFloat()
-        val maxSNR = 60f // Ajusta según tu escala
+        val maxSNR = 60f
+
+        // Eje horizontal
+        canvas.drawLine(0f, height.toFloat(), width.toFloat(), height.toFloat(), axisPaint)
 
         snrData.forEachIndexed { index, snr ->
             val barHeight = (snr / maxSNR) * height
-            val left = index * widthPerBar + 10
+            val left = index * widthPerBar + 5
             val top = height - barHeight
-            val right = (index + 1) * widthPerBar - 10
+            val right = (index + 1) * widthPerBar - 5
             canvas.drawRect(left, top, right, height.toFloat(), barPaint)
         }
     }

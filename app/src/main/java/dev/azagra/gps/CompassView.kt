@@ -15,13 +15,13 @@ class CompassView @JvmOverloads constructor(
     private val textPaint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val satellitePaint = Paint(Paint.ANTI_ALIAS_FLAG)
 
-    private var satellites: List<Pair<Float, Float>> = emptyList() // (angle, SNR)
+    private var satellites: List<Pair<Float, Float>> = emptyList() // (azimuth, SNR)
 
     init {
         context.theme.obtainStyledAttributes(attrs, intArrayOf(android.R.attr.colorPrimary), 0, 0)
             .use {
                 paint.color = it.getColor(0, Color.GREEN)
-                satellitePaint.color = it.getColor(0, Color.GREEN)
+                satellitePaint.color = it.getColor(0, Color.CYAN)
             }
         textPaint.color = Color.WHITE
         textPaint.textSize = 40f
@@ -59,12 +59,14 @@ class CompassView @JvmOverloads constructor(
         }
 
         // Dibujar satélites
-        satellites.forEach { (angleDeg, _) ->
-            val angle = Math.toRadians((angleDeg - azimuth).toDouble())
-            val satRadius = radius - 60
-            val x = cx + satRadius * Math.sin(angle).toFloat()
-            val y = cy - satRadius * Math.cos(angle).toFloat()
-            canvas.drawCircle(x, y, 15f, satellitePaint)
+        if (satellites.isNotEmpty()) {
+            satellites.forEach { (angleDeg, _) ->
+                val angle = Math.toRadians((angleDeg - azimuth).toDouble())
+                val satRadius = radius - 60
+                val x = cx + satRadius * Math.sin(angle).toFloat()
+                val y = cy - satRadius * Math.cos(angle).toFloat()
+                canvas.drawCircle(x, y, 12f, satellitePaint)
+            }
         }
     }
 }

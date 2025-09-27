@@ -42,7 +42,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Inicializar vistas
         compassView = findViewById(R.id.compassView)
         snrGraph = findViewById(R.id.snrGraph)
         tvCoordinates = findViewById(R.id.tvCoordinates)
@@ -84,17 +83,21 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         try {
             locationManager.registerGnssStatusCallback(object : GnssStatus.Callback() {
                 override fun onSatelliteStatusChanged(status: GnssStatus) {
-                    val snrList = mutableListOf<Int>()
+                    val snrList = mutableListOf<Float>()
+                    val satellitesPositions = mutableListOf<Pair<Float, Float>>()
                     var visibleSatellites = 0
                     for (i in 0 until status.satelliteCount) {
                         if (status.usedInFix(i)) {
-                            snrList.add(status.getCn0DbHz(i).roundToInt())
+                            val snr = status.getCn0DbHz(i)
+                            snrList.add(snr)
+                            val azimuth = status.getAzimuthDegrees(i)
+                            satellitesPositions.add(Pair(azimuth, snr))
                             visibleSatellites++
                         }
                     }
                     snrGraph.updateSnrData(snrList)
                     tvSatellitesCount.text = getString(R.string.satellites_text, visibleSatellites)
-                    compassView.updateSatellites(status) // dibuja los satélites
+                    compassView.updateSatellites(satellitesPositions)
                 }
             }, null)
         } catch (ex: SecurityException) {
@@ -121,7 +124,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         if (SensorManager.getRotationMatrix(rotationMatrix, null, accelerometerReading, magnetometerReading)) {
             SensorManager.getOrientation(rotationMatrix, orientationAngles)
             val azimuth = Math.toDegrees(orientationAngles[0].toDouble()).toFloat()
-            // Movimiento suave de brújula
             val smoothAzimuth = lastAzimuth + (azimuth - lastAzimuth) * 0.1f
             compassView.updateOrientation(smoothAzimuth)
             lastAzimuth = smoothAzimuth
@@ -142,7 +144,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         if (lastLocation != null) {
             val latDMS = decimalToDMS(lastLocation.latitude, true)
             val lonDMS = decimalToDMS(lastLocation.longitude, false)
-            val url = "https://www.google.com/maps/place/${URLEncoder.encode(latDMS + " " + lonDMS, "UTF-8")}"
+            val url = "https://www.google.com/maps/place/${URLEncoder.encode("$latDMS $lonDMS", "UTF-8")}"
 
             val intent = Intent(Intent.ACTION_SEND).apply {
                 type = "text/plain"

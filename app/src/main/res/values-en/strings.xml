@@ -1,22 +1,20 @@
 <resources>
     <string name="app_name">GPS</string>
-    
-    <!-- Botones -->
     <string name="start_tracking">Start</string>
     <string name="stop_tracking">Stop</string>
     <string name="show_map">Show Map</string>
     <string name="export_gpx">Export GPX</string>
-    <string name="share_location">Share location</string>
 
-    <!-- Mensajes -->
     <string name="permission_denied">Permission denied</string>
+    <string name="location_not_available">Location not available</string>
 
-    <!-- Datos de ubicación -->
     <string name="coordinates">Coordinates:</string>
     <string name="altitude">Altitude:</string>
     <string name="satellites">Satellites:</string>
     <string name="utc_time">UTC:</string>
+    <string name="share_location">Share location</string>
 
-    <!-- Texto dinámico con latitud y longitud -->
-    <string name="coordinates_text" formatted="false">Lat: %1$s, Lon: %2$s</string>
+    <string name="coordinates_text">Lat: %1$.6f, Lon: %2$.6f</string>
+    <string name="altitude_text">Altitude: %1$.1f m</string>
+    <string name="satellites_text">Visible satellites: %1$d</string>
 </resources>
