@@ -4,8 +4,7 @@ import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
-import androidx.core.content.ContextCompat
-import com.google.android.material.R
+import com.google.android.material.color.MaterialColors
 import kotlin.math.min
 
 class CompassView @JvmOverloads constructor(
@@ -16,15 +15,14 @@ class CompassView @JvmOverloads constructor(
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val textPaint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val arrowPath = Path()
-
     private var satellites: List<Pair<Float, Float>> = emptyList()
 
     init {
         paint.style = Paint.Style.STROKE
         paint.strokeWidth = 6f
-        paint.color = resolveColor(android.R.attr.colorOnSurface)
+        paint.color = getThemeColor(android.R.attr.colorForeground) // colorOnSurface
 
-        textPaint.color = resolveColor(android.R.attr.colorOnSurface)
+        textPaint.color = getThemeColor(android.R.attr.colorForeground)
         textPaint.textSize = 48f
         textPaint.textAlign = Paint.Align.CENTER
     }
@@ -38,19 +36,19 @@ class CompassView @JvmOverloads constructor(
 
         // Fondo circular
         paint.style = Paint.Style.FILL
-        paint.color = resolveColor(android.R.attr.colorSurface)
+        paint.color = getThemeColor(android.R.attr.colorBackground) // colorSurface
         canvas.drawCircle(cx, cy, radius, paint)
 
         // Borde
         paint.style = Paint.Style.STROKE
-        paint.color = resolveColor(android.R.attr.colorOnSurface)
+        paint.color = getThemeColor(android.R.attr.colorForeground)
         canvas.drawCircle(cx, cy, radius, paint)
 
         // Flecha norte
         canvas.save()
         canvas.rotate(-azimuth, cx, cy)
         paint.style = Paint.Style.FILL
-        paint.color = resolveColor(android.R.attr.colorPrimary)
+        paint.color = getThemeColor(android.R.attr.colorPrimary)
         arrowPath.reset()
         arrowPath.moveTo(cx, cy - radius * 0.9f)
         arrowPath.lineTo(cx - 20f, cy)
@@ -60,18 +58,16 @@ class CompassView @JvmOverloads constructor(
         canvas.restore()
 
         // Texto N/E/S/W
-        paint.style = Paint.Style.FILL
-        paint.color = resolveColor(android.R.attr.colorOnSurface)
-        textPaint.color = resolveColor(android.R.attr.colorOnSurface)
+        textPaint.color = getThemeColor(android.R.attr.colorForeground)
         canvas.drawText("N", cx, cy - radius + 60f, textPaint)
         canvas.drawText("S", cx, cy + radius - 20f, textPaint)
         canvas.drawText("E", cx + radius - 30f, cy + 15f, textPaint)
         canvas.drawText("W", cx - radius + 30f, cy + 15f, textPaint)
 
-        // Satélites (opcional)
+        // Satélites
         paint.style = Paint.Style.FILL
-        paint.color = resolveColor(android.R.attr.colorSecondary)
-        satellites.forEach { (angle, snr) ->
+        paint.color = getThemeColor(android.R.attr.colorSecondary)
+        satellites.forEach { (angle, _) ->
             val rad = Math.toRadians(angle.toDouble() - azimuth)
             val satX = cx + radius * 0.6f * Math.sin(rad).toFloat()
             val satY = cy - radius * 0.6f * Math.cos(rad).toFloat()
@@ -89,10 +85,7 @@ class CompassView @JvmOverloads constructor(
         invalidate()
     }
 
-    private fun resolveColor(attr: Int): Int {
-        val typedArray = context.obtainStyledAttributes(intArrayOf(attr))
-        val color = typedArray.getColor(0, Color.MAGENTA)
-        typedArray.recycle()
-        return color
+    private fun getThemeColor(attr: Int): Int {
+        return MaterialColors.getColor(this, attr, Color.MAGENTA)
     }
 }

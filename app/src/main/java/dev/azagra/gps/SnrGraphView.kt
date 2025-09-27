@@ -5,8 +5,8 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.View
+import com.google.android.material.color.MaterialColors
 import kotlin.math.max
-import kotlin.math.min
 
 class SnrGraphView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
@@ -17,15 +17,14 @@ class SnrGraphView @JvmOverloads constructor(
     private val textPaint = Paint(Paint.ANTI_ALIAS_FLAG)
 
     init {
-        barPaint.color = resolveColor(android.R.attr.colorPrimary)
-        textPaint.color = resolveColor(android.R.attr.colorOnSurface)
+        barPaint.color = getThemeColor(android.R.attr.colorPrimary)
+        textPaint.color = getThemeColor(android.R.attr.colorForeground)
         textPaint.textSize = 32f
         textPaint.textAlign = Paint.Align.CENTER
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-
         if (snrData.isEmpty()) return
 
         val w = width.toFloat()
@@ -49,10 +48,7 @@ class SnrGraphView @JvmOverloads constructor(
         invalidate()
     }
 
-    private fun resolveColor(attr: Int): Int {
-        val typedArray = context.obtainStyledAttributes(intArrayOf(attr))
-        val color = typedArray.getColor(0, 0xFF00FF)
-        typedArray.recycle()
-        return color
+    private fun getThemeColor(attr: Int): Int {
+        return MaterialColors.getColor(this, attr, 0xFF00FF)
     }
 }
