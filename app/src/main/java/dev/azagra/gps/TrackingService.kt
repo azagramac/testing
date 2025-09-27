@@ -10,7 +10,6 @@ import android.location.Location
 import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
-import androidx.core.content.ContextCompat
 import com.google.android.gms.location.*
 
 class TrackingService : Service() {
@@ -43,6 +42,11 @@ class TrackingService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if (intent?.action == "STOP_TRACKING") {
+            stopSelf()
+            return START_NOT_STICKY
+        }
+
         startForeground(NOTIF_ID, createNotification())
         startLocationUpdates()
         return START_STICKY
@@ -121,12 +125,4 @@ class TrackingService : Service() {
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
-
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        if (intent?.action == "STOP_TRACKING") {
-            stopSelf()
-            return START_NOT_STICKY
-        }
-        return super.onStartCommand(intent, flags, startId)
-    }
 }
