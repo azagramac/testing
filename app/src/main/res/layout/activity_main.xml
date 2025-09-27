@@ -12,34 +12,38 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/start_tracking"
+        android:contentDescription="@string/start_tracking"
         android:icon="@drawable/ic_baseline_play_arrow_24"
-        android:iconGravity="textStart"
-        android:layout_marginBottom="16dp"/>
+        app:iconGravity="textStart"
+        android:layout_marginBottom="16dp" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnStopTracking"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/stop_tracking"
+        android:contentDescription="@string/stop_tracking"
         android:icon="@drawable/ic_baseline_stop_24"
-        android:iconGravity="textStart"
+        app:iconGravity="textStart"
         android:layout_marginBottom="16dp"
-        android:enabled="false"/>
+        android:enabled="false" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnShowMap"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/show_map"
+        android:contentDescription="@string/show_map"
         android:icon="@drawable/ic_baseline_map_24"
-        android:iconGravity="textStart"
-        android:layout_marginBottom="16dp"/>
+        app:iconGravity="textStart"
+        android:layout_marginBottom="16dp" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnExportGpx"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/export_gpx"
-        android:layout_marginBottom="16dp"/>
+        android:contentDescription="@string/export_gpx"
+        android:layout_marginBottom="16dp" />
 
 </LinearLayout>
